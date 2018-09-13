@@ -13,7 +13,6 @@ dna::dna(){
 
 //Class Destructor
 dna::~dna(){
-  cout<<"Destructor Invoked."<<endl;
 }
 
 
@@ -27,6 +26,15 @@ string dna::myStudentInfo()
   return info;
 }
 
+//Method to display user choice menu
+string dna::userMenu()
+{
+  stringstream strStream;
+  strStream << "A) Get Summary Statistics of DNA File"
+            << "B) Generate 1000 Strings"
+            << "C) Exit";
+  string menu = strStream.str();
+}
 
 //Method to Read through DNA file
 string dna::getFileContent(string filename)
@@ -69,7 +77,7 @@ string dna::getNucleotideCount()
       case 'G':
         numG += 1;
         break;
-      case '\r':
+      case '\r':        //checking if char is new line
         break;
       case '\n':
         break;
@@ -96,7 +104,7 @@ string dna::getNucleotideCount()
 //Method to get the relative probability of each nucleotide
 string dna::getNucleotideRelProb()
 {
-  int numNucleotides = 0;
+  numNucleotides = 0;
   stringstream strStream;
   string relProbALL;
   for (char& nucleotide : dnaInput)
@@ -110,13 +118,115 @@ string dna::getNucleotideRelProb()
   relProbT = (float)numT / numNucleotides;  //number of T nucleotides over total
   relProbC = (float)numC / numNucleotides;
   relProbG = (float)numG / numNucleotides;
-  strStream << "Relative Probability of A: " << relProbA << "\n"
-            << "Relative Probability of T: " << relProbT << "\n"
-            << "Relative Probability of C: " << relProbC << "\n"
-            << "Relative Probability of G: " << relProbG;
+  strStream << "A: " << relProbA << "\n"
+            << "T: " << relProbT << "\n"
+            << "C: " << relProbC << "\n"
+            << "G: " << relProbG;
   relProbALL = strStream.str();
   return relProbALL;
 
+}
+
+
+//Method to get relative probability of nucleotide bigrams
+string dna::getBigramRelProb()
+{
+  string bigram = "";
+  stringstream strStream;
+  for(char& nucleotide : dnaInput)
+  {
+    if (nucleotide == '\n' || nucleotide == '\r'){
+      continue;
+    }
+    if (bigram.length() < 2){
+      bigram += nucleotide;
+    }
+    if (bigram == "AA"){
+      relProbAA++;
+    }
+    if (bigram == "AT"){
+      relProbAT++;
+    }
+    if (bigram == "AC"){
+      relProbAC++;
+    }
+    if (bigram == "AG"){
+      relProbAG++;
+    }
+    if (bigram == "TA"){
+      relProbTA++;
+    }
+    if (bigram == "TT"){
+      relProbTT++;
+    }
+    if (bigram == "TC"){
+      relProbTC++;
+    }
+    if (bigram == "TG"){
+      relProbTG++;
+    }
+    if (bigram == "CA"){
+      relProbCA++;
+    }
+    if (bigram == "CT"){
+      relProbCT++;
+    }
+    if (bigram == "CC"){
+      relProbCC++;
+    }
+    if (bigram == "CG"){
+      relProbCG++;
+    }
+    if (bigram == "GA"){
+      relProbGA++;
+    }
+    if (bigram == "GT"){
+      relProbGT++;
+    }
+    if (bigram == "GC"){
+      relProbGC++;
+    }
+    if (bigram == "GG"){
+      relProbGG++;
+    }
+    if (bigram.length() == 2){
+      bigram = "";
+    }
+  }
+  relProbAA = (relProbAA / (numNucleotides / 2));       //Divide amount of bigram over total number of nucleotides
+  relProbAT = (relProbAT / (numNucleotides / 2));
+  relProbAC = (relProbAC / (numNucleotides / 2));
+  relProbAG = (relProbAG / (numNucleotides / 2));
+  relProbTA = (relProbTA / (numNucleotides / 2));
+  relProbTT = (relProbTT / (numNucleotides / 2));
+  relProbTC = (relProbTC / (numNucleotides / 2));
+  relProbTG = (relProbTG / (numNucleotides / 2));
+  relProbCA = (relProbCA / (numNucleotides / 2));
+  relProbCT = (relProbCT / (numNucleotides / 2));
+  relProbCC = (relProbCC / (numNucleotides / 2));
+  relProbCG = (relProbCG / (numNucleotides / 2));
+  relProbGA = (relProbGA / (numNucleotides / 2));
+  relProbGT = (relProbGT / (numNucleotides / 2));
+  relProbGC = (relProbGC / (numNucleotides / 2));
+  relProbGG = (relProbGG / (numNucleotides / 2));
+  strStream << "AA: " << relProbAA << "\n"        //adding all values to string for ease of reading
+            << "AT: " << relProbAT << "\n"
+            << "AC: " << relProbAC << "\n"
+            << "AG: " << relProbAG << "\n"
+            << "TA: " << relProbTA << "\n"
+            << "TT: " << relProbTT << "\n"
+            << "TC: " << relProbTC << "\n"
+            << "TG: " << relProbTG << "\n"
+            << "CA: " << relProbCA << "\n"
+            << "CT: " << relProbCT << "\n"
+            << "CC: " << relProbCC << "\n"
+            << "CG: " << relProbCG << "\n"
+            << "GA: " << relProbGA << "\n"
+            << "GT: " << relProbGT << "\n"
+            << "GC: " << relProbGC << "\n"
+            << "GG: " << relProbGG;
+  string relProbBigramALL = strStream.str();
+  return relProbBigramALL;
 }
 
 
@@ -138,34 +248,48 @@ int dna::getLineLength()
 
 
 //Method to find mean of DNA string length
-int dna::getLineMean(string filename)
+float dna::getLineMean(string filename)
 {
   fin.open(filename);
   string line;
   numLines = 0;
   while (getline(fin,line)){
-    numLines ++;
+    ++numLines;
   }
-  meanLineLength = numLines / lineSum; //dividing total characters by number of lines
-  return meanLineLength;
+  lineMean = lineSum / numLines;     //dividing total characters by number of lines
+  fin.close();                      // Closing/Resetting File
+  fin.clear();
+  fin.seekg(0, fin.beg);
+  return lineMean;
+
 }
 
 
 
 //Method to calculate variance of line lengths
-/*int dna::getLineVariance(string filename)
+float dna::getLineVariance(string filename)
 {
   fin.open(filename);
-  string line;
+  string line = "";
   int varSumValues = 0;
-  while (getline(fin,line))
+  int lineLength = 0;
+  while (getline(fin, line))
   {
-    for (string s : line)
+    for (char ch : line)
     {
-      varSumValues += pow((s.length() - meanLineLength),2);
+      if (ch == '\n' || ch == '\r'){
+        varSumValues += pow((lineLength - lineMean),2);  // (xi-x)^2
+        lineLength = 0; //reset to zero for new line length
+      }
+    lineLength++;
     }
   }
-  variance = varSumValues / (numLines - 1);
+  variance = varSumValues / (numLines);
   return variance;
 }
-*/
+
+float dna::getLineStandardDeviation()
+{
+  float standardDeviation = sqrt(variance); //SD is square root of variance
+  return standardDeviation;
+}
