@@ -24,6 +24,7 @@ string dna::myStudentInfo()
   return info;
 }
 
+//Method to print a random string
 void dna::printRandomString()
 {
   string generatedDNA = "";
@@ -34,7 +35,7 @@ void dna::printRandomString()
   string newString = "";
   genDNA = "";
   srand(time(0));
-  a = ((float)rand() / (RAND_MAX));             //set initial values for a,b,c,d (WILL BE CHANGED LATER);
+  a = ((float)rand() / (RAND_MAX));             //set initial values for a,b,c,d
   b = ((float)rand() / (RAND_MAX));
 
   c = sqrt(-2*log(a)) * cos(2* M_PI * b);
@@ -46,7 +47,7 @@ void dna::printRandomString()
       newString += charList[rand() % charList.size()];
     }
     newString += '\n';
-    a = ((float)rand() / (RAND_MAX));           //recalculate a,b,c,d for random line length
+    a = ((float)rand() / (RAND_MAX));           //recalculate a,b,c,d for new random line length
     b = ((float)rand() / (RAND_MAX));
     c = sqrt(-2*log(a)) * cos(2* M_PI * b);
     d = (standardDeviation * c) + lineMean;
@@ -312,9 +313,10 @@ float dna::getLineStandardDeviation()
   return standardDeviation;
 }
 
+//Method to print summary statistics to output file
 string dna::printSumStats()
 {
-  fout.open("nathanaelEverett.txt", ios::trunc);
+  fout.open("nathanaelEverett.txt", ios::trunc);    //open output file
   fout << " " << endl;
   fout << info << endl;
   fout << " " << endl;
