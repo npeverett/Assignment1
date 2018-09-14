@@ -1,5 +1,15 @@
 # Assignment1
 
+Nathanael Everett
+2296318
+CPSC350-03
+
+
+This program takes in DNA and prints summary statistics on the DNA nucleotides. In addition, the program will generate 1000 random strings with the same statistics.
+
+Sources used to help in this project were:
+
+Data Structures & Algorithms Textbook
 EOF
 https://stackoverflow.com/questions/7681555/resetting-the-end-of-file-state-of-a-ifstream-object-in-c
 
