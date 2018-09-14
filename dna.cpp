@@ -1,12 +1,11 @@
 #include <iostream>
 #include <fstream>
-#include <cmath>
+#include <math.h>
 #include <sstream>
 #include "dnaHead.h"
 
 
 using namespace std;
-
 //Class Empty Constructor
 dna::dna(){
 }
@@ -15,31 +14,52 @@ dna::dna(){
 dna::~dna(){
 }
 
-
 //Method to display personal student information
 string dna::myStudentInfo()
 {
   const string name = "Name:        Nathanael Everett";
   const string id   = "ID:          2296318";
   const string assn = "Assignment:  Assignment 1";
-  const string info = name + "\n" + id + "\n" + assn;
+  info = name + "\n" + id + "\n" + assn;
   return info;
 }
 
-//Method to display user choice menu
-string dna::userMenu()
+void dna::printRandomString()
 {
-  stringstream strStream;
-  strStream << "A) Get Summary Statistics of DNA File"
-            << "B) Generate 1000 Strings"
-            << "C) Exit";
-  string menu = strStream.str();
+  string generatedDNA = "";
+  float a,b;    //random numbers
+  float c,d;    //random standard variabes
+  int count = 0;
+  const string charList = "ATGCatgc";
+  string newString = "";
+  genDNA = "";
+  srand(time(0));
+  a = ((float)rand() / (RAND_MAX));             //set initial values for a,b,c,d (WILL BE CHANGED LATER);
+  b = ((float)rand() / (RAND_MAX));
+
+  c = sqrt(-2*log(a)) * cos(2* M_PI * b);
+  d = (standardDeviation * c) + lineMean;
+
+  while(count < 1001)
+  {
+    for (int i = 0; i < d; i++){
+      newString += charList[rand() % charList.size()];
+    }
+    newString += '\n';
+    a = ((float)rand() / (RAND_MAX));           //recalculate a,b,c,d for random line length
+    b = ((float)rand() / (RAND_MAX));
+    c = sqrt(-2*log(a)) * cos(2* M_PI * b);
+    d = (standardDeviation * c) + lineMean;
+    genDNA += newString;
+    count++;
+    newString = "";                             //reset string for a new line
+  }
 }
 
 //Method to Read through DNA file
 string dna::getFileContent(string filename)
 {
-  stringstream strStream;
+  stringstream strStream;                       //use stringstream for ease of reading in output
   fin.open(filename);
   if (fin.is_open())
   {
@@ -55,14 +75,14 @@ string dna::getFileContent(string filename)
 }
 
 
-
 //Method to get sum of dna nucleotide
 string dna::getNucleotideCount()
 {
   stringstream strStream;
-  string nucleotideCount;
+  nucleotideCount = "";
   for (char& nucleotide : dnaInput )
   {
+    nucleotide = toupper(nucleotide);
     switch (nucleotide)  //using switch to check nucleotide type
     {
       case 'A':
@@ -82,11 +102,8 @@ string dna::getNucleotideCount()
       case '\n':
         break;
       default:
-        cout << "Character other than ATCG found" << endl;
-        //numA = 0;     //reset values if file has error
-        //numT = 0;
-        //numC = 0;
-        //numG = 0;
+        cout << "Character other than ATCG found. This program only analyzes DNA nucleotides. Please enter a file accordingly" << endl;
+        exit(0);        //cannot complete computations on invalid chars
     }
   }
   strStream << "A: " << numA << "\n"
@@ -106,9 +123,9 @@ string dna::getNucleotideRelProb()
 {
   numNucleotides = 0;
   stringstream strStream;
-  string relProbALL;
   for (char& nucleotide : dnaInput)
   {
+    nucleotide = toupper(nucleotide);
     if (nucleotide == '\n' || nucleotide == '\r'){
       continue;
     }
@@ -135,6 +152,7 @@ string dna::getBigramRelProb()
   stringstream strStream;
   for(char& nucleotide : dnaInput)
   {
+    nucleotide = toupper(nucleotide);
     if (nucleotide == '\n' || nucleotide == '\r'){
       continue;
     }
@@ -225,7 +243,7 @@ string dna::getBigramRelProb()
             << "GT: " << relProbGT << "\n"
             << "GC: " << relProbGC << "\n"
             << "GG: " << relProbGG;
-  string relProbBigramALL = strStream.str();
+  relProbBigramALL = strStream.str();
   return relProbBigramALL;
 }
 
@@ -234,14 +252,13 @@ string dna::getBigramRelProb()
 //Method to find sum of DNA string length
 int dna::getLineLength()
 {
-    for (char& ch : dnaInput)
-    {
-      if (ch == '\n' || ch == '\r'){
-        continue;
-      }
-
-      lineSum++;
+  for (char& ch : dnaInput)
+  {
+    if (ch == '\n' || ch == '\r'){
+    continue;
     }
+    lineSum++;
+  }
   return lineSum;
 }
 
@@ -288,8 +305,33 @@ float dna::getLineVariance(string filename)
   return variance;
 }
 
+//Method to calculate Standard Deviation of line length
 float dna::getLineStandardDeviation()
 {
-  float standardDeviation = sqrt(variance); //SD is square root of variance
+  standardDeviation = sqrt(variance); //SD is square root of variance
   return standardDeviation;
+}
+
+string dna::printSumStats()
+{
+  fout.open("nathanaelEverett.txt", ios::trunc);
+  fout << " " << endl;
+  fout << info << endl;
+  fout << " " << endl;
+  fout << "Total Number Of: " << endl;
+  fout << nucleotideCount << endl;
+  fout << " " << endl;
+  fout << "Relative Probability Of: " << endl;
+  fout << relProbALL << endl;
+  fout << " " << endl;
+  fout << "Relative Bigram Probability Of: " << endl;
+  fout << relProbBigramALL << endl;
+  fout << " " << endl;
+  fout << "Sum: " << lineSum << endl;
+  fout << "Mean: " << lineMean << endl;
+  fout << "Variance: " << variance << endl;
+  fout << "Standard Deviation: " << standardDeviation << endl;
+  fout << " " << endl;
+  fout << genDNA << endl;
+  return ("Summary Statistics Additionally Printed to File.");
 }
